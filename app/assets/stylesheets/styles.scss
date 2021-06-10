@@ -57,6 +57,25 @@ a,a:visited{
     border-radius: 2px;
     color: #fafafa;
 }
+.btn-sesion{
+     color: #318aac !important;
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0.5em 1.2em;
+  background: rgba(0,0,0,0);
+  border: 2px solid;
+  border-color: #318aac;
+  transition: all 1s ease;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+  margin-top: 1rem;
+  margin-bottom: 14px;
+}
+.btn-sesion:hover{
+    background: #318aac;
+    color: #fff !important;
+}
 
 .top-space{
     margin-top: 1rem;
@@ -74,3 +93,6 @@ a,a:visited{
     padding: 3px 5px;
 }
 
+.text-left{
+    text-align: left;
+}
