@@ -1,4 +1,7 @@
 class ArticlesController < ApplicationController
+	
+	before_action :authenticate_user!, except: [:show, :index] #en vez de except, puede ser only que seria lo contrario
+	before_action :set_article, except: [:index, :new, :create]
 	#a esta ruta se accede con GET /articles
 	def index #este es de leer
 		#todos los registros. SELECT *FROM articles
@@ -7,12 +10,13 @@ class ArticlesController < ApplicationController
 	# get articles/:id
 	def show #este es de vista
 		#ecuentra un registro por su id
-		@article = Article.find(params[:id])#le podemos pasar el id de la tabla y va a buscar ese elemento
+		# @article = Article.find(params[:id])#le podemos pasar el id de la tabla y va a buscar ese elemento
 		#where
 		#Article.where("title LIKE?", "%hola%") #busca cuantos registros tienen la palabra hola
 		#Article.where("id = ?", params[:id]) # para buscar por la id
 		#Article.where.not("id = ?", params[:id]) # para mostrar las id que el usuario no paso como parametro
 				#EJEMPLO: Article.where.not("id = 1")... se le puede acregar el count
+		@article.update_visits_count
 	end
 
 	#get articles/new
@@ -21,11 +25,10 @@ class ArticlesController < ApplicationController
 	end
 
 	def edit
-		@article = Article.find(params[:id]) #primero hay que encontarr el articulo que se desea editar
 	end
 	#POST /articles
 	def create
-		@article = Article.new(title:params[:article][:title], #aqui se pasa como clave, el campo de la base de dato que queremos guardar 
+		@article = current_user.articles.new(title:params[:article][:title], #aqui se pasa como clave, el campo de la base de dato que queremos guardar 
 								body: params[:article][:body])
 		if @article.save
             redirect_to @article
@@ -37,7 +40,7 @@ class ArticlesController < ApplicationController
 	#DELETE /articles/:id
 	def destroy 
 		#DELETE FROM articles
-		@article = Article.find(params[:id]) #busca el articulo que quiere eliminar el usuario
+		
 		@article.destroy #destroy elimina ek objeto de la base de datos
 		redirect_to articles_path# recireccione a la pagina donde se encuengtra todos los archivos
 	end
@@ -46,12 +49,20 @@ class ArticlesController < ApplicationController
 	def update
 		#UPDATE
 		# @articles.update_attributes({title: "nuevo titulo"}) //va a actualizar el registro con la base de datos
-		@article = Article.find(params[:id])
-		if @article.update(title:params[:article][:title], body: params[:article][:body]) # si  el articulo pudo ser guardado entonces redirigelo a articles 
+		@article = curren_user.articles.new(article_params)
+		if @article.save
 			redirect_to @article
 		else 								# sino, redirije de nuevo a edit
-			render :edit
+			render :new
 		end
 	end
+	private
+	 def set_article
+	 	@article = Article.find(params[:id]) #busca el articulo que quiere eliminar el usuario
+	 end
+
+	 def article_params
+	 	params.require(:article).permit(:title,:body)
+	 end
 
 end
